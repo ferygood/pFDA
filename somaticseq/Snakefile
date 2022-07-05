@@ -4,14 +4,15 @@
 lab = ["LAB" + str(i+1) for i in range(3)]
 replicate = ["LIB" + str(i+1) for i in range(4)]
 panel = ["PanelA", "PanelB"]
+sample = ["PanelA", "PanelB"]
 
 rule all:
     input:
         "results/multiSample.SNV.classifier",
         "results/multiSample.INDEL.classifier"
 
-pisces_vcf = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-scalpel_vcf = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+pisces_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+scalpel_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
 
 # split Pisces to snv and indel
 rule split_file:
