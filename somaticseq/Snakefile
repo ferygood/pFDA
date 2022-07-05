@@ -6,8 +6,8 @@ replicate = ["LIB" + str(i+1) for i in range(4)]
 
 rule all:
     input:
-        "./result/multiSample.SNV.classifier",
-        "./result/multiSample.INDEL.classifier"
+        "results/multiSample.SNV.classifier",
+        "results/multiSample.INDEL.classifier"
 
 # split Pisces to snv and indel
 rule split_file:
@@ -33,7 +33,7 @@ rule sort_scalpel:
 # somaticseq parallel
 rule somaticseq_parallel:
     input:
-        outdir = expand("./results/{{panel}}_{lab}_{replicate}", lab=lab, replicate=replicate),
+        outdir = expand("results/{{panel}}_{lab}_{replicate}", lab=lab, replicate=replicate),
         bam = expand("/home/azureuser/data/{{panel}}/BAM/Bamout/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", lab=lab, replicate=replicate),
         mutect2 = expand("/home/azureuser/data/{{panel}}/VCF/filtered_VCF_M2/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", lab=lab, replicate=replicate),
         vardict = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_VarDict/{{panel}}_{lab}_{replicate}.vcf", lab=lab, replicate=replicate),
@@ -42,10 +42,10 @@ rule somaticseq_parallel:
         pisces_indel = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_indels.vcf", lab=lab, replicate=replicate),
         pisces_snv = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_snvs.vcf", lab=lab, replicate=replicate)
     output:
-        expand("./results/{{panel}}_{lab}_{replicate}/Consensus.sSNV.vcf", lab=lab, replicate=replicate),
-        expand("./results/{{panel}}_{lab}_{replicate}/Consensus.sINDEL.vcf", lab=lab, replicate=replicate),
-        expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate),
-        expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
+        expand("results/{{panel}}_{lab}_{replicate}/Consensus.sSNV.vcf", lab=lab, replicate=replicate),
+        expand("results/{{panel}}_{lab}_{replicate}/Consensus.sINDEL.vcf", lab=lab, replicate=replicate),
+        expand("results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate),
+        expand("results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         """
@@ -64,11 +64,11 @@ rule somaticseq_parallel:
         
 # somaticseq classifier
 def snv_tsvs(wildcards):
-    snvs = expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate)
+    snvs = expand("results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate)
     return snvs
 
 def indel_tsvs(wildcards):
-    indels = expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
+    indels = expand("results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
     return indels
 
 rule somaticseq_classifier:
@@ -76,20 +76,20 @@ rule somaticseq_classifier:
       snv_tsvs,
       indel_tsvs
     output: 
-      "./result/multiSample.SNV.classifier",
-      "./result/multiSample.INDEL.classifier"
+      "results/multiSample.SNV.classifier",
+      "results/multiSample.INDEL.classifier"
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script: 
       """
       somatic_xgboost.py train \
         -tsvs {input.snv_tsvs} \
-        -out ./result/multiSample.SNV.classifier \
+        -out results/multiSample.SNV.classifier \
         -threads 8 -depth 12 -seed 42 -method hist -iter 250 \
         --extra-params scale_pos_weight:0.1 grow_policy:lossguide max_leaves:12
 
       somatic_xgboost.py train \
         -tsvs {input.indel_tsvs} \
-        -out ./result/multiSample.INDEL.classifier \
+        -out results/multiSample.INDEL.classifier \
         -threads 8 -depth 12 -seed 42 -method hist -iter 250 \
         --extra-params scale_pos_weight:0.1 grow_policy:lossguide max_leaves:12
       """
