@@ -31,15 +31,16 @@ rule sort_scalpel:
     script:
         "vcf-sort -c {input} > {output}"
 
+outdir = expand("results/{panel}_{lab}_{replicate}/", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+bam = expand("/home/azureuser/data/{panel}/BAM/Bamout/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+mutect2 = expand("/home/azureuser/data/{panel}/VCF/filtered_VCF_M2/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+vardict = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_VarDict/{panel}_{lab}_{replicate}.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+strelka = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Strelka2/{panel}_{lab}_{replicate}_strelka2.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+
 # somaticseq parallel
 rule somaticseq_parallel:
-    input:
-        outdir = expand("results/{panel}_{lab}_{replicate}/", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        bam = expand("/home/azureuser/data/{panel}/BAM/Bamout/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        mutect2 = expand("/home/azureuser/data/{panel}/VCF/filtered_VCF_M2/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        vardict = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_VarDict/{panel}_{lab}_{replicate}.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+    input:        
         scalpel_sort = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel_sorted.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        strelka = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Strelka2/{panel}_{lab}_{replicate}_strelka2.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
         pisces_indel = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
         pisces_snv = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     output:
@@ -51,14 +52,14 @@ rule somaticseq_parallel:
     script:
         """
         somaticseq_parallel.py \
-          --output-directory {input.outdir} \
+          --output-directory {wildcards.outdir} \
           --genome-reference /home/azureuser/data/ref/hg19.fa \
           single \
-          --bam-file {input.bam}
-          --mutect2-vcf {input.mutect2} \
-          --vardict-vcf {input.vardict} \
+          --bam-file {wildcards.bam}
+          --mutect2-vcf {wildcards.mutect2} \
+          --vardict-vcf {wildcards.vardict} \
           --scalpel-vcf {input.scalpel_sort} \
-          --strelka-vcf {input.strelka} \
+          --strelka-vcf {wildcards.strelka} \
           --arbitrary-snvs {input.pisces_snv} \
           --arbitrary-indels {input.pisces_indel} \
         """
@@ -66,10 +67,12 @@ rule somaticseq_parallel:
 # somaticseq classifier
 def snv_tsvs(wildcards):
     snvs = expand("results/{panel}_{lab}_{replicate}/Ensemble.sSNV.tsv", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+    print(snvs)
     return snvs
 
 def indel_tsvs(wildcards):
     indels = expand("results/{panel}_{lab}_{replicate}/Ensemble.sINDEL.tsv", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+    print(indels)
     return indels
 
 rule somaticseq_classifier:
