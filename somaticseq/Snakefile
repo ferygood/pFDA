@@ -16,6 +16,7 @@ rule split_file:
     output:
         indel = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_indels.vcf", lab=lab, replicate=replicate),
         snv = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_snvs.vcf", lab=lab, replicate=replicate)
+    conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         "splitVcf.py -infile {input} -snv {output.snv} -indel {output.indel}"
 
@@ -25,13 +26,14 @@ rule sort_scalpel:
         expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_scalpel/{{panel}}_{lab}_{replicate}_scalpel.vcf", lab=lab, replicate=replicate)
     output:
         expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_scalpel/{{panel}}_{lab}_{replicate}_scalpel_sorted.vcf", lab=lab, replicate=replicate)
+    conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         "vcf-sort -c {input} > {output}"
 
 # somaticseq parallel
 rule somaticseq_parallel:
     input:
-        outdir = expand("./results/{{panel}}_{lab}_{replicate}", lab=lab, replicate=replicate)
+        outdir = expand("./results/{{panel}}_{lab}_{replicate}", lab=lab, replicate=replicate),
         bam = expand("/home/azureuser/data/{{panel}}/BAM/Bamout/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", lab=lab, replicate=replicate),
         mutect2 = expand("/home/azureuser/data/{{panel}}/VCF/filtered_VCF_M2/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", lab=lab, replicate=replicate),
         vardict = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_VarDict/{{panel}}_{lab}_{replicate}.vcf", lab=lab, replicate=replicate),
@@ -44,6 +46,7 @@ rule somaticseq_parallel:
         expand("./results/{{panel}}_{lab}_{replicate}/Consensus.sINDEL.vcf", lab=lab, replicate=replicate),
         expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate),
         expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
+    conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         """
         somaticseq_parallel.py \
@@ -75,6 +78,7 @@ rule somaticseq_classifier:
     output: 
       "./result/multiSample.SNV.classifier",
       "./result/multiSample.INDEL.classifier"
+    conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script: 
       """
       somatic_xgboost.py train \
