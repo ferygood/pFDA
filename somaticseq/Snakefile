@@ -11,16 +11,13 @@ rule all:
         "results/multiSample.SNV.classifier",
         "results/multiSample.INDEL.classifier"
 
-pisces_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-scalpel_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-
 # split Pisces to snv and indel
 rule split_file:
     input:
-        pisces_vcf
+        pisces_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", sample=sample, sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     output:
-        pisces_indel = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        pisces_snv = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        pisces_indel = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        pisces_snv = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         "splitVcf.py -infile {input.pisces_vcf} -snv {output.pisces_snv} -indel {output.pisces_indel}"
@@ -28,30 +25,30 @@ rule split_file:
 # sort scalpel file based on chromosomes
 rule sort_scalpel:
     input:
-       scalpel_vcf 
+       scalpel_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     output:
-        scalpel_sort = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel_sorted.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        scalpel_sort = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel_sorted.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         "vcf-sort -c {input.scalpel_vcf} > {output.scalpel_sort}"
 
-outdir = expand("results/{panel}_{lab}_{replicate}/", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-bam = expand("/home/azureuser/data/{panel}/BAM/Bamout/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-mutect2 = expand("/home/azureuser/data/{panel}/VCF/filtered_VCF_M2/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-vardict = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_VarDict/{panel}_{lab}_{replicate}.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
-strelka = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Strelka2/{panel}_{lab}_{replicate}_strelka2.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+outdir = expand("results/{panel}_{lab}_{replicate}/", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+bam = expand("/home/azureuser/data/{sample}/BAM/Bamout/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+mutect2 = expand("/home/azureuser/data/{sample}/VCF/filtered_VCF_M2/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+vardict = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_VarDict/{panel}_{lab}_{replicate}.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+strelka = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Strelka2/{panel}_{lab}_{replicate}_strelka2.vcf.gz", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
 
 # somaticseq parallel
 rule somaticseq_parallel:
     input:        
-        scalpel_sort = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel_sorted.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        pisces_indel = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        pisces_snv = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        scalpel_sort = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel_sorted.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        pisces_indel = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        pisces_snv = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     output:
-        expand("results/{panel}_{lab}_{replicate}/Consensus.sSNV.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        expand("results/{panel}_{lab}_{replicate}/Consensus.sINDEL.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        expand("results/{panel}_{lab}_{replicate}/Ensemble.sSNV.tsv", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        expand("results/{panel}_{lab}_{replicate}/Ensemble.sINDEL.tsv", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        expand("results/{panel}_{lab}_{replicate}/Consensus.sSNV.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        expand("results/{panel}_{lab}_{replicate}/Consensus.sINDEL.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        expand("results/{panel}_{lab}_{replicate}/Ensemble.sSNV.tsv", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        expand("results/{panel}_{lab}_{replicate}/Ensemble.sINDEL.tsv", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
         """
@@ -70,12 +67,12 @@ rule somaticseq_parallel:
         
 # somaticseq classifier
 def snv_tsvs(wildcards):
-    snvs = expand("results/{panel}_{lab}_{replicate}/Ensemble.sSNV.tsv", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+    snvs = expand("results/{panel}_{lab}_{replicate}/Ensemble.sSNV.tsv", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     print(snvs)
     return snvs
 
 def indel_tsvs(wildcards):
-    indels = expand("results/{panel}_{lab}_{replicate}/Ensemble.sINDEL.tsv", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+    indels = expand("results/{panel}_{lab}_{replicate}/Ensemble.sINDEL.tsv", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     print(indels)
     return indels
 
