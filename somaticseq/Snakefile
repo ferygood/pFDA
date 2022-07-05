@@ -1,8 +1,92 @@
-configfile: ""
+#!/usr/bin/env python3
+
+# Set global variables
+lab = ["LAB" + str(i+1) for i in range(3)]
+replicate = ["LIB" + str(i+1) for i in range(4)]
 
 rule all:
     input:
-        "model"
+        "./result/multiSample.SNV.classifier",
+        "./result/multiSample.INDEL.classifier"
 
+# split Pisces to snv and indel
 rule split_file:
     input:
+        expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", lab=lab, replicate=replicate)
+    output:
+        indel = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_indels.vcf", lab=lab, replicate=replicate),
+        snv = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_snvs.vcf", lab=lab, replicate=replicate)
+    script:
+        "splitVcf.py -infile {input} -snv {output.snv} -indel {output.indel}"
+
+# sort scalpel file based on chromosomes
+rule sort_scalpel:
+    input:
+        expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_scalpel/{{panel}}_{lab}_{replicate}_scalpel.vcf", lab=lab, replicate=replicate)
+    output:
+        expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_scalpel/{{panel}}_{lab}_{replicate}_scalpel_sorted.vcf", lab=lab, replicate=replicate)
+    script:
+        "vcf-sort -c {input} > {output}"
+
+# somaticseq parallel
+rule somaticseq_parallel:
+    input:
+        outdir = expand("./results/{{panel}}_{lab}_{replicate}", lab=lab, replicate=replicate)
+        bam = expand("/home/azureuser/data/{{panel}}/BAM/Bamout/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", lab=lab, replicate=replicate),
+        mutect2 = expand("/home/azureuser/data/{{panel}}/VCF/filtered_VCF_M2/{{panel}}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", lab=lab, replicate=replicate),
+        vardict = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_VarDict/{{panel}}_{lab}_{replicate}.vcf", lab=lab, replicate=replicate),
+        scalpel_sort = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_scalpel/{{panel}}_{lab}_{replicate}_scalpel_sorted.vcf", lab=lab, replicate=replicate),
+        strelka = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Strelka2/{{panel}}_{lab}_{replicate}_strelka2.vcf.gz", lab=lab, replicate=replicate),
+        pisces_indel = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_indels.vcf", lab=lab, replicate=replicate),
+        pisces_snv = expand("/home/azureuser/data/{{panel}}/VCF/unfiltered_VCF_Pisces/{{panel}}_{lab}_{replicate}_snvs.vcf", lab=lab, replicate=replicate)
+    output:
+        expand("./results/{{panel}}_{lab}_{replicate}/Consensus.sSNV.vcf", lab=lab, replicate=replicate),
+        expand("./results/{{panel}}_{lab}_{replicate}/Consensus.sINDEL.vcf", lab=lab, replicate=replicate),
+        expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate),
+        expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
+    script:
+        """
+        somaticseq_parallel.py \
+          --output-directory {input.outdir} \
+          --genome-reference /home/azureuser/data/ref/hg19.fa \
+          single \
+          --bam-file {input.bam}
+          --mutect2-vcf {input.mutect2} \
+          --vardict-vcf {input.vardict} \
+          --scalpel-vcf {input.scalpel_sort} \
+          --strelka-vcf {input.strelka} \
+          --arbitrary-snvs {input.pisces_snv} \
+          --arbitrary-indels {input.pisces_indel} \
+        """
+        
+# somaticseq classifier
+def snv_tsvs(wildcards):
+    snvs = expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate)
+    return snvs
+
+def indel_tsvs(wildcards):
+    indels = expand("./results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
+    return indels
+
+rule somaticseq_classifier:
+    input: 
+      snv_tsvs,
+      indel_tsvs
+    output: 
+      "./result/multiSample.SNV.classifier",
+      "./result/multiSample.INDEL.classifier"
+    script: 
+      """
+      somatic_xgboost.py train \
+        -tsvs {input.snv_tsvs} \
+        -out ./result/multiSample.SNV.classifier \
+        -threads 8 -depth 12 -seed 42 -method hist -iter 250 \
+        --extra-params scale_pos_weight:0.1 grow_policy:lossguide max_leaves:12
+
+      somatic_xgboost.py train \
+        -tsvs {input.indel_tsvs} \
+        -out ./result/multiSample.INDEL.classifier \
+        -threads 8 -depth 12 -seed 42 -method hist -iter 250 \
+        --extra-params scale_pos_weight:0.1 grow_policy:lossguide max_leaves:12
+      """
+
