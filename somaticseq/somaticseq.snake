@@ -10,10 +10,10 @@ rule all:
   input:
     expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf", sample=samples),
     expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf", sample=samples),
-    expand("PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf", sample=samples)
-    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sSNV.vcf", sample=samples)
-    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sINDEL.vcf", sample=samples)
-    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sSNV.tsv", sample=samples)
+    expand("PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sSNV.vcf", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sINDEL.vcf", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sSNV.tsv", sample=samples),
     expand("/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sINDEL.tsv", sample=samples)
 
 # split pisces
@@ -47,17 +47,17 @@ rule somaticseq_parallel:
         pisces_indel = "PanelA/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf",
         pisces_snv = "PanelA/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf"
     output:
-        "results/{sample}/Consensus.sSNV.vcf", 
-        "results/{sample}/Consensus.sINDEL.vcf", 
-        "results/{sample}/Ensemble.sSNV.tsv", 
-        "results/{sample}/Ensemble.sINDEL.tsv", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sSNV.vcf", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sINDEL.vcf", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sSNV.tsv", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sINDEL.tsv", 
     shell:
         """
         somaticseq_parallel.py \
           --output-directory /home/azureuser/ycchen/pFDA/results/{wildcards.sample} \
           --genome-reference /home/azureuser/data/ref/hg19.fa \
           single \
-          --bam-file {input.bam}
+          --bam-file {input.bam} \
           --mutect2-vcf {input.mutect2} \
           --vardict-vcf {input.vardict} \
           --scalpel-vcf {input.scalpel_sort} \
