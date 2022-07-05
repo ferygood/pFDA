@@ -64,11 +64,11 @@ rule somaticseq_parallel:
         
 # somaticseq classifier
 def snv_tsvs(wildcards):
-    snvs = expand("results/{{panel}}_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate)
+    snvs = expand("results/Panel*_{lab}_{replicate}/Ensemble.sSNV.tsv", lab=lab, replicate=replicate)
     return snvs
 
 def indel_tsvs(wildcards):
-    indels = expand("results/{{panel}}_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
+    indels = expand("results/Panel*_{lab}_{replicate}/Ensemble.sINDEL.tsv", lab=lab, replicate=replicate)
     return indels
 
 rule somaticseq_classifier:
