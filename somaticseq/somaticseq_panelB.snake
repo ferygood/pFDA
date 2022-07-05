@@ -1,0 +1,69 @@
+
+import os
+os.chdir("/home/azureuser/data/")
+
+samples = ["PanelB_LAB1_LIB1", "PanelB_LAB1_LIB2", "PanelB_LAB1_LIB3", "PanelB_LAB1_LIB4",
+          "PanelB_LAB2_LIB1", "PanelB_LAB2_LIB2", "PanelB_LAB2_LIB3", "PanelB_LAB2_LIB4",
+          "PanelB_LAB3_LIB1", "PanelB_LAB3_LIB2", "PanelB_LAB3_LIB3", "PanelB_LAB3_LIB4"]
+
+rule all:
+  input:
+    expand("PanelB/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf", sample=samples),
+    expand("PanelB/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf", sample=samples),
+    expand("PanelB/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sSNV.vcf", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sINDEL.vcf", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sSNV.tsv", sample=samples),
+    expand("/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sINDEL.tsv", sample=samples)
+
+# split pisces
+rule split_pisces:
+  input:
+    pisces_vcf = "PanelB/VCF/unfiltered_VCF_Pisces/{sample}.hg19.aligned.duplicates_marked.recalibrated.vcf"
+  output:
+    pisces_indel = "PanelB/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf",
+    pisces_snv = "PanelB/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf"
+  shell:
+    "splitVcf.py -infile {input.pisces_vcf} -snv {output.pisces_snv} -indel {output.pisces_indel}"
+
+# sort scalpel file based on chromosomes
+rule sort_scalpel:
+  input:
+    "PanelB/VCF/unfiltered_VCF_scalpel/{sample}_scalpel.vcf"
+  output:
+    "PanelB/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf"
+  conda: "/home/azureuser/ycchen/pFDA/somaticseq/somaticseq.yaml"
+  shell:
+    "vcf-sort -c {input} > {output}"
+
+# somaticseq parallel
+rule somaticseq_parallel:
+    input:
+        bam = "PanelB/BAM/Bamout/{sample}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam",
+        mutect2 = "PanelB/VCF/filtered_VCF_M2/{sample}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", 
+        vardict = "PanelB/VCF/unfiltered_VCF_VarDict/{sample}.vcf",
+        strelka = "PanelB/VCF/unfiltered_VCF_Strelka2/{sample}_strelka2.vcf.gz",   
+        scalpel_sort = "PanelB/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf",
+        pisces_indel = "PanelB/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf",
+        pisces_snv = "PanelB/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf"
+    output:
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sSNV.vcf", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sINDEL.vcf", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sSNV.tsv", 
+        "/home/azureuser/ycchen/pFDA/results/{sample}/Ensemble.sINDEL.tsv", 
+    shell:
+        """
+        somaticseq_parallel.py \
+          --output-directory /home/azureuser/ycchen/pFDA/results/{wildcards.sample} \
+          --genome-reference /home/azureuser/data/ref/hg19.fa \
+          single \
+          --bam-file {input.bam} \
+          --mutect2-vcf {input.mutect2} \
+          --vardict-vcf {input.vardict} \
+          --scalpel-vcf {input.scalpel_sort} \
+          --strelka-vcf {input.strelka} \
+          --arbitrary-snvs {input.pisces_snv} \
+          --arbitrary-indels {input.pisces_indel} \
+        """
+
+
