@@ -14,7 +14,7 @@ rule all:
 # split Pisces to snv and indel
 rule split_file:
     input:
-        pisces_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", sample=sample, sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        pisces_vcf = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     output:
         pisces_indel = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True),
         pisces_snv = expand("/home/azureuser/data/{sample}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", sample=sample, panel=panel, lab=lab, replicate=replicate, allow_missing=True)
