@@ -34,7 +34,7 @@ rule sort_scalpel:
 # somaticseq parallel
 rule somaticseq_parallel:
     input:
-        outdir = expand("results/{panel}_{lab}_{replicate}", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        outdir = expand("results/{panel}_{lab}_{replicate}/", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
         bam = expand("/home/azureuser/data/{panel}/BAM/Bamout/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-unfiltered.vcf.gz.out.bam", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
         mutect2 = expand("/home/azureuser/data/{panel}/VCF/filtered_VCF_M2/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated-filtered.vcf.gz", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
         vardict = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_VarDict/{panel}_{lab}_{replicate}.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
