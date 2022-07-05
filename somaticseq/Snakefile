@@ -1,0 +1,8 @@
+configfile: ""
+
+rule all:
+    input:
+        "model"
+
+rule split_file:
+    input:
