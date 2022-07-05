@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 import os
 os.chdir("/home/azureuser/data/")
@@ -10,7 +9,7 @@ samples = ["PanelA_LAB1_LIB1", "PanelA_LAB1_LIB2", "PanelA_LAB1_LIB3", "PanelA_L
 rule all:
   input:
     expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf", sample=samples),
-    pisces_snv = expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf", sample=samples),
+    expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf", sample=samples),
     expand("PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf", sample=samples)
     # expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sSNV.vcf", sample=samples)
     # expand("/home/azureuser/ycchen/pFDA/results/{sample}/Consensus.sINDEL.vcf", sample=samples)
@@ -20,22 +19,21 @@ rule all:
 # split pisces
 rule split_pisces:
   input:
-    pisces_vcf = expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}.hg19.aligned.duplicates_marked.recalibrated.vcf", sample=samples)
+    pisces_vcf = "PanelA/VCF/unfiltered_VCF_Pisces/{sample}.hg19.aligned.duplicates_marked.recalibrated.vcf"
   output:
-    pisces_indel = expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf", sample=samples)
-    pisces_snv = expand("PanelA/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf", sample=samples)
-  conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
-  script:
+    pisces_indel = "PanelA/VCF/unfiltered_VCF_Pisces/{sample}_indels.vcf",
+    pisces_snv = "PanelA/VCF/unfiltered_VCF_Pisces/{sample}_snvs.vcf"
+  shell:
     "splitVcf.py -infile {input.pisces_vcf} -snv {output.pisces_snv} -indel {output.pisces_indel}"
 
 # sort scalpel file based on chromosomes
 rule sort_scalpel:
-    input:
-      scalpel_vcf = expand("PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel.vcf", sample=samples)
-    output:
-      scalpel_sort = expand("PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf", sample=samples)
-    conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
-    script:
-      "vcf-sort -c {input.scalpel_vcf} > {output.scalpel_sort}"
+  input:
+    "PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel.vcf"
+  output:
+    "PanelA/VCF/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf"
+  conda: "/home/azureuser/ycchen/pFDA/somaticseq/somaticseq.yaml"
+  shell:
+    "vcf-sort -c {input} > {output}"
 
 
