@@ -10,21 +10,24 @@ rule all:
         "results/multiSample.SNV.classifier",
         "results/multiSample.INDEL.classifier"
 
+pisces_vcf = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+scalpel_vcf = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+
 # split Pisces to snv and indel
 rule split_file:
     input:
-        pisces_vcf = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}.hg19.aligned.duplicates_marked.recalibrated.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        pisces_vcf
     output:
-        indel = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
-        snv = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+        pisces_indel = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_indels.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True),
+        pisces_snv = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_Pisces/{panel}_{lab}_{replicate}_snvs.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
     script:
-        "splitVcf.py -infile {input.pisces_vcf} -snv {output.snv} -indel {output.indel}"
+        "splitVcf.py -infile {input.pisces_vcf} -snv {output.pisces_snv} -indel {output.pisces_indel}"
 
 # sort scalpel file based on chromosomes
 rule sort_scalpel:
     input:
-        scalpel_vcf = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
+       scalpel_vcf 
     output:
         scalpel_sort = expand("/home/azureuser/data/{panel}/VCF/unfiltered_VCF_scalpel/{panel}_{lab}_{replicate}_scalpel_sorted.vcf", panel=panel, lab=lab, replicate=replicate, allow_missing=True)
     conda: "/home/azureuser/bin/miniconda3/envs/somaticseq"
