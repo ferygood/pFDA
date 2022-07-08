@@ -1,0 +1,41 @@
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however crucial for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                    count    min threads    max threads
+-------------------  -------  -------------  -------------
+all                        1              1              1
+bcftools_concat           24              1              1
+bcftools_view_indel       23              1              1
+bcftools_view_snv         23              1              1
+total                     71              1              1
+
+Select jobs to execute...
+
+[Fri Jul  8 18:08:49 2022]
+rule bcftools_view_indel:
+    input: PanelB_LAB1_LIB2/Consensus.sINDEL.vcf
+    output: PanelB_LAB1_LIB2/Consensus.sINDEL.vcf.gz
+    jobid: 42
+    reason: Missing output files: PanelB_LAB1_LIB2/Consensus.sINDEL.vcf.gz
+    wildcards: prefix=PanelB_LAB1_LIB2
+    resources: tmpdir=/tmp
+
+Activating conda environment: .snakemake/conda/5be55336717733756b5fced64848a4b0
+Activating conda environment: .snakemake/conda/5be55336717733756b5fced64848a4b0
+[Fri Jul  8 18:08:50 2022]
+Error in rule bcftools_view_indel:
+    jobid: 42
+    output: PanelB_LAB1_LIB2/Consensus.sINDEL.vcf.gz
+    conda-env: /home/yaochung41/github/pFDA/results/.snakemake/conda/5be55336717733756b5fced64848a4b0
+
+RuleException:
+CalledProcessError in line 32 of /home/yaochung41/github/pFDA/results/Snakefile:
+Command 'source /home/yaochung41/anaconda3/envs/snakemake/bin/activate '/home/yaochung41/github/pFDA/results/.snakemake/conda/5be55336717733756b5fced64848a4b0'; set -euo pipefail;  python /home/yaochung41/github/pFDA/results/.snakemake/scripts/tmpgc21stch.wrapper.py' returned non-zero exit status 1.
+  File "/home/yaochung41/github/pFDA/results/Snakefile", line 32, in __rule_bcftools_view_indel
+  File "/home/yaochung41/anaconda3/envs/snakemake/envs/snakemake/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2022-07-08T180848.241715.snakemake.log

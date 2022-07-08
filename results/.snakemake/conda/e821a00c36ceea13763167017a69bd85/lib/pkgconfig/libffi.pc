@@ -1,0 +1,11 @@
+prefix=/home/yaochung41/github/pFDA/results/.snakemake/conda/e821a00c36ceea13763167017a69bd85
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+toolexeclibdir=${libdir}
+includedir=/home/yaochung41/github/pFDA/results/.snakemake/conda/e821a00c36ceea13763167017a69bd85/include
+
+Name: libffi
+Description: Library supporting Foreign Function Interfaces
+Version: 3.4.2
+Libs: -L${toolexeclibdir} -lffi
+Cflags: -I${includedir}

@@ -1,0 +1,10 @@
+#!/home/yaochung41/github/pFDA/results/.snakemake/conda/5be55336717733756b5fced64848a4b0/bin/python3.10
+# -*- coding: utf-8 -*-
+import re
+import sys
+
+from pip._internal.cli.main import main
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())

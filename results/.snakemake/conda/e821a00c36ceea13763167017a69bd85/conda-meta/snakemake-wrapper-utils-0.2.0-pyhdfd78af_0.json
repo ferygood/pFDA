@@ -1,0 +1,145 @@
+{
+  "build": "pyhdfd78af_0",
+  "build_number": 0,
+  "channel": "https://conda.anaconda.org/bioconda/noarch",
+  "constrains": [],
+  "depends": [
+    "python >=3.5"
+  ],
+  "extracted_package_dir": "/home/yaochung41/anaconda3/envs/snakemake/pkgs/snakemake-wrapper-utils-0.2.0-pyhdfd78af_0",
+  "features": "",
+  "files": [
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/INSTALLER",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/LICENSE.md",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/METADATA",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/RECORD",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/REQUESTED",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/WHEEL",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils-0.2.0.dist-info/direct_url.json",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/__init__.py",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/bcftools.py",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/java.py",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/samtools.py",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/__init__.cpython-310.pyc",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/bcftools.cpython-310.pyc",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/java.cpython-310.pyc",
+    "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/samtools.cpython-310.pyc"
+  ],
+  "fn": "snakemake-wrapper-utils-0.2.0-pyhdfd78af_0.tar.bz2",
+  "license": "MIT",
+  "link": {
+    "source": "/home/yaochung41/anaconda3/envs/snakemake/pkgs/snakemake-wrapper-utils-0.2.0-pyhdfd78af_0",
+    "type": 1
+  },
+  "md5": "0e7cdce7b85cd052a26cb5415845dffc",
+  "name": "snakemake-wrapper-utils",
+  "noarch": "python",
+  "package_tarball_full_path": "/home/yaochung41/anaconda3/envs/snakemake/pkgs/snakemake-wrapper-utils-0.2.0-pyhdfd78af_0.tar.bz2",
+  "package_type": "noarch_python",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/INSTALLER",
+        "path_type": "hardlink",
+        "sha256": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+        "sha256_in_prefix": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+        "size_in_bytes": 5
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/LICENSE.md",
+        "path_type": "hardlink",
+        "sha256": "ef986e95f3dfe3b8a82e9d1eb93998650eda27d82ef644e9083df7029b457189",
+        "sha256_in_prefix": "ef986e95f3dfe3b8a82e9d1eb93998650eda27d82ef644e9083df7029b457189",
+        "size_in_bytes": 1090
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/METADATA",
+        "path_type": "hardlink",
+        "sha256": "0b15a2fa63032d45c77b2eaa2ed7bd2282ccc8e1fbbb479c542f62560cbce53f",
+        "sha256_in_prefix": "0b15a2fa63032d45c77b2eaa2ed7bd2282ccc8e1fbbb479c542f62560cbce53f",
+        "size_in_bytes": 433
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/RECORD",
+        "path_type": "hardlink",
+        "sha256": "a3995873da8d09dede48d20a0e6758f963d08ff52b175170f8deb66215671f27",
+        "sha256_in_prefix": "a3995873da8d09dede48d20a0e6758f963d08ff52b175170f8deb66215671f27",
+        "size_in_bytes": 1297
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/REQUESTED",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/WHEEL",
+        "path_type": "hardlink",
+        "sha256": "57b8957243fe198ade7afb130e7bf57808a742dfda02bc270319a73f48328016",
+        "sha256_in_prefix": "57b8957243fe198ade7afb130e7bf57808a742dfda02bc270319a73f48328016",
+        "size_in_bytes": 83
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils-0.2.0.dist-info/direct_url.json",
+        "path_type": "hardlink",
+        "sha256": "1bc9dff11075fae2b95b7113858d957c5777468f1ae0466f1b1f80c68cf7d0b1",
+        "sha256_in_prefix": "1bc9dff11075fae2b95b7113858d957c5777468f1ae0466f1b1f80c68cf7d0b1",
+        "size_in_bytes": 97
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils/__init__.py",
+        "path_type": "hardlink",
+        "sha256": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
+        "sha256_in_prefix": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
+        "size_in_bytes": 22
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils/bcftools.py",
+        "path_type": "hardlink",
+        "sha256": "8cda02be4721c9d825ce223f0a2cc70c7acb1a9d86cd3feef110eb7866098493",
+        "sha256_in_prefix": "8cda02be4721c9d825ce223f0a2cc70c7acb1a9d86cd3feef110eb7866098493",
+        "size_in_bytes": 3252
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils/java.py",
+        "path_type": "hardlink",
+        "sha256": "ff6caf0808ccdfeb2d7291d7c217d09c06423e8d8556ceadb322fbfc02627631",
+        "sha256_in_prefix": "ff6caf0808ccdfeb2d7291d7c217d09c06423e8d8556ceadb322fbfc02627631",
+        "size_in_bytes": 2297
+      },
+      {
+        "_path": "site-packages/snakemake_wrapper_utils/samtools.py",
+        "path_type": "hardlink",
+        "sha256": "7bac63bc74616cb7cfe36be8314f154f56f1e666cc54697371eca1c4752382be",
+        "sha256_in_prefix": "7bac63bc74616cb7cfe36be8314f154f56f1e666cc54697371eca1c4752382be",
+        "size_in_bytes": 1259
+      },
+      {
+        "_path": "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/__init__.cpython-310.pyc",
+        "path_type": "pyc_file"
+      },
+      {
+        "_path": "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/bcftools.cpython-310.pyc",
+        "path_type": "pyc_file"
+      },
+      {
+        "_path": "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/java.cpython-310.pyc",
+        "path_type": "pyc_file"
+      },
+      {
+        "_path": "lib/python3.10/site-packages/snakemake_wrapper_utils/__pycache__/samtools.cpython-310.pyc",
+        "path_type": "pyc_file"
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "snakemake-wrapper-utils==0.2.0",
+  "sha256": "babcc02ff916c1a29f84235e70ca05e79357498d6f59261bc9cd3159dc380bf7",
+  "size": 10187,
+  "subdir": "noarch",
+  "timestamp": 1618936224000,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/bioconda/noarch/snakemake-wrapper-utils-0.2.0-pyhdfd78af_0.tar.bz2",
+  "version": "0.2.0"
+}

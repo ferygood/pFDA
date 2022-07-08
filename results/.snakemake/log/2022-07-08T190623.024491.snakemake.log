@@ -1,0 +1,12 @@
+Building DAG of jobs...
+Creating conda environment https://github.com/snakemake/snakemake-wrappers/raw/v1.7.0/bio/bcftools/index/environment.yaml...
+Downloading and installing remote packages.
+CreateCondaEnvironmentException:
+Could not create conda environment from /tmp/tmpkqbc00rv.yaml:
+Command:
+mamba env create --quiet --file "/home/yaochung41/github/pFDA/results/.snakemake/conda/a7150563fb97b2635a364da05988e2cd.yaml" --prefix "/home/yaochung41/github/pFDA/results/.snakemake/conda/a7150563fb97b2635a364da05988e2cd"
+Output:
+Encountered problems while solving:
+  - package bcftools-1.11-h7c999a4_0 requires htslib >=1.11,<1.12.0a0, but none of the providers can be installed
+
+
