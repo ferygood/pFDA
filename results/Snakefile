@@ -8,58 +8,49 @@ samples = ["PanelA_LAB1_LIB1", "PanelA_LAB1_LIB2", "PanelA_LAB1_LIB3", "PanelA_L
 rule all:
     input:
       expand("{prefix}/041_{prefix}.vcf", prefix = samples),
-      expand("{prefix}/Consensus.sSNV.vcf.gz.csi", prefix = samples),
-      expand("{prefix}/Consensus.sINDEL.vcf.gz.csi", prefix = samples)
+      #expand("{prefix}/Consensus.sSNV.vcf.gz.csi", prefix = samples),
+      #expand("{prefix}/Consensus.sINDEL.vcf.gz.csi", prefix = samples)
 
-# step 1 bcftools view
-rule bcftools_view_snv:
+# step 1 bcftools view and index
+rule bcftools_view:
     input: 
-      "{prefix}/Consensus.sSNV.vcf"
+      snv="{prefix}/Consensus.sSNV.vcf",
+      indel="{prefix}/Consensus.sINDEL.vcf"
     output: 
-      "{prefix}/Consensus.sSNV.vcf.gz"
-    params:
-      extra = "-Oz"
-    wrapper:
-      "v1.7.0/bio/bcftools/view"
+      snv="{prefix}/Consensus.sSNV.vcf.gz",
+      indel="{prefix}/Consensus.sINDEL.vcf.gz"
+    conda: "bcftools.yaml"
+    shell:
+      """
+      bcftools view {input.snv} -Oz -o {output.snv}
+      bcftools view {input.indel} -Oz -o {output.indel}
+      """
 
-
-rule bcftools_view_indel:
+rule bcftools_index:
     input: 
-      "{prefix}/Consensus.sINDEL.vcf"
+      snv="{prefix}/Consensus.sSNV.vcf.gz",
+      indel="{prefix}/Consensus.sINDEL.vcf.gz"
     output:
-      "{prefix}/Consensus.sINDEL.vcf.gz"
-    params:
-      extra = "-Oz"
-    wrapper:
-      "v1.7.0/bio/bcftools/view"
-
-# step 2 bcftools index
-rule bcftools_index_snv:
-    input: 
-      "{prefix}/Consensus.sSNV.vcf.gz"
-    output: 
-      "{prefix}/Consensus.sSNV.vcf.gz.csi"
-    wrapper:
-      "v1.7.0/bio/bcftools/index"
-
-rule bcftools_index_indel:
-    input: 
-      "{prefix}/Consensus.sINDEL.vcf.gz"
-    output: 
-      "{prefix}/Consensus.sINDEL.vcf.gz.csi"
-    wrapper:
-      "v1.7.0/bio/bcftools/index"
+      snv="{prefix}/Consensus.sSNV.vcf.gz.csi",
+      indel="{prefix}/Consensus.sINDEL.vcf.gz.csi"
+    conda: "bcftools.yaml"  
+    shell:
+      """
+      bcftools index {input.snv} -o {output.snv}
+      bcftools index {input.indel} -o {output.indel}
+      """
 
 # step 3 bcftools concat
 rule bcftools_concat:
     input: 
-      calls=["{prefix}/Consensus.sSNV.vcf.gz", "{prefix}/Consensus.sINDEL.vcf.gz"],
-
+      vcf1="{prefix}/Consensus.sSNV.vcf.gz",
+      vcf2="{prefix}/Consensus.sINDEL.vcf.gz",
+      index1="{prefix}/Consensus.sSNV.vcf.gz.csi",
+      index2="{prefix}/Consensus.sINDEL.vcf.gz.csi"
     output: 
       "{prefix}/041_{prefix}.vcf"
-    params:
-      extra="-a"
-    wrapper:
-      "v1.7.0/bio/bcftools/concat"
+    conda: "bcftools.yaml"
+    shell:
+      "bcftools concat -a {input.vcf1} {input.vcf2} -o {output} "
     
       
