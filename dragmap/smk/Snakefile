@@ -38,7 +38,7 @@ rule dragmap_build:
 rule dragmap_align:
     input:
         reads=["/home/azureuser/data/FASTQ/{sample}_R1.fastq.gz", "/home/azureuser/data/FASTQ/{sample}_R2.fastq.gz"],
-        idx="genome",
+        idx="/home/azureuser/data/ycchen/{genome}",
     output:
         "/home/azureuser/data/BAM/mapped/{sample}.sorted.bam",
     log:
