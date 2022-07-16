@@ -6,7 +6,9 @@ samples = ["PanelX_LAB1_LIB1", "PanelX_LAB1_LIB2", "PanelX_LAB1_LIB3",
 
 rule all:
     input:
+       expand("/home/azureuser/data/ycchen/{genome}_hash_table.cfg", genome="hg19")
        expand("/home/azureuser/data/BAM/mapped/{sample}.sorted.bam", sample = samples)
+       
 
 
 rule dragmap_build:
@@ -27,7 +29,7 @@ rule dragmap_build:
     log:
         "logs/dragmap/{genome}.build.log",
     params:
-        extra="--output-directory /home/azureuser/data/ycchen",
+        extra="--output-directory /home/azureuser/data/ycchen/{genome}",
     threads: 2
     wrapper:
         "v1.7.0-4-g6a6d28a/bio/dragmap/build"
