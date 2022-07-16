@@ -6,7 +6,7 @@ samples = ["PanelX_LAB1_LIB1", "PanelX_LAB1_LIB2", "PanelX_LAB1_LIB3",
 
 rule all:
     input:
-       expand("/home/azureuser/data/ycchen/{genome}_hash_table.cfg", genome="hg19")
+       expand("/home/azureuser/data/ycchen/{genome}_hash_table.cfg", genome="hg19"),
        expand("/home/azureuser/data/BAM/mapped/{sample}.sorted.bam", sample = samples)
        
 
@@ -38,7 +38,7 @@ rule dragmap_build:
 rule dragmap_align:
     input:
         reads=["/home/azureuser/data/FASTQ/{sample}_R1.fastq.gz", "/home/azureuser/data/FASTQ/{sample}_R2.fastq.gz"],
-        idx="genome",
+        idx="/home/azureuser/data/ycchen/{genome}",
     output:
         "/home/azureuser/data/BAM/mapped/{sample}.sorted.bam",
     log:
