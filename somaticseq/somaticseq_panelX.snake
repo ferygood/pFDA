@@ -23,7 +23,7 @@ rule split_pisces:
   output:
     pisces_indel = "VCF.norm/unfiltered_VCF_Pisces/{sample}_indels.vcf",
     pisces_snv = "VCF.norm/unfiltered_VCF_Pisces/{sample}_snvs.vcf"
-  conda: "/home/azureuser/ycchen/pFDA/somaticseq/somaticseq.yaml"
+  conda: "ycchen/pFDA/somaticseq/somaticseq.yaml"
   shell:
     "splitVcf.py -infile {input.pisces_vcf} -snv {output.pisces_snv} -indel {output.pisces_indel}"
 
@@ -33,7 +33,7 @@ rule sort_scalpel:
     "VCF.norm/unfiltered_VCF_scalpel/{sample}.vcf"
   output:
     "VCF.norm/unfiltered_VCF_scalpel/{sample}_scalpel_sorted.vcf"
-  conda: "/home/azureuser/ycchen/pFDA/somaticseq/somaticseq.yaml"
+  conda: "ycchen/pFDA/somaticseq/somaticseq.yaml"
   shell:
     "vcf-sort -c {input} > {output}"
 
