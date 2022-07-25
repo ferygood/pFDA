@@ -20,6 +20,6 @@ process sort_align {
 }
 
 workflow {
-  bam_data = channel.fromPath( 'results/mapped/*.bam' ).map { file -> tuple(file.baseName, file) }
-  sort_align( bam_data )
+    bam_data = channel.fromPath( 'results/mapped/*.bam' ).map { file -> tuple(file.baseName, file) }
+    sort_align( bam_data )
 }
