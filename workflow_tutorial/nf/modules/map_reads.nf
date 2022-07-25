@@ -10,19 +10,20 @@ process mapping {
     input:
         tuple val(sample_id), file(fastq)
         //file index
+        path index
 
     output:
         tuple val(sample_id), file('*.bam')
 
     script:
         """
-        bwa mem data/genome.fa $fastq | samtools view -b - > ${sample_id}.bam
+        bwa $index $fastq | samtools view -b - > ${sample_id}.bam
         """
 
 }
 
 workflow {
-  fastq_data = channel.fromPath( 'data/samples/*.fastq' ).map { file -> tuple(file.baseName, file) }
-  //index = channel.from( 'data/genome.fa' )
-  mapping( fastq_data )
+    fastq_data = channel.fromFilePairs( 'data/samples/*.fastq', size:1 ) //.map { file -> tuple(file.baseName, file) }
+    index = channel.fromPath( 'data/genome.fa' )
+    mapping( fastq_data, index.toList() )
 }

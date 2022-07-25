@@ -17,8 +17,8 @@ include { call_variants } from './modules/call_variants.nf'
 //workflow 
 workflow {
   fastq_data = channel.fromPath( params.fastq ).map { file -> tuple(file.baseName, file) }
-  mapping( fastq_data )
-  sort_align( mapping.out )
   index = channel.fromPath( params.index )
+  mapping( fastq_data, index.toList() )
+  sort_align( mapping.out )
   call_variants( sort_align.out, index )
 }

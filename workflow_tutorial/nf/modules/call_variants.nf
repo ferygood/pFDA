@@ -8,7 +8,7 @@ process call_variants {
     publishDir "results/calls", mode: 'copy'
 
     input:
-        file all_sorted_bam
+        file bams
         file index
 
     output:
@@ -16,12 +16,12 @@ process call_variants {
 
     script:
         """
-        bcftools mpileup -f $index $all_sorted_bam | bcftools call -mv -> all.vcf
+        bcftools mpileup -f $index $bams | bcftools call -mv -> all.vcf
         """
 }
 
 workflow {
-  all_sorted_bam = channel.fromPath( 'results/mapped/*.sorted.bam' ).collect()
-  index = channel.fromPath( 'data/genome.fa' )
-  call_variants( all_sorted_bam, index )
+    all_sorted_bam = channel.fromPath( 'results/mapped/*.sorted.bam' ).collect()
+    index = channel.fromPath( 'data/genome.fa' )
+    call_variants( all_sorted_bam, index )
 }
