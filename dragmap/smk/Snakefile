@@ -1,4 +1,4 @@
-# dragmap build index and map PanelX
+# dragmiap build index and map PanelX
 
 samples = ["PanelX_LAB1_LIB1", "PanelX_LAB1_LIB2", "PanelX_LAB1_LIB3",
            "PanelX_LAB2_LIB1", "PanelX_LAB2_LIB2", "PanelX_LAB2_LIB3",
@@ -6,17 +6,14 @@ samples = ["PanelX_LAB1_LIB1", "PanelX_LAB1_LIB2", "PanelX_LAB1_LIB3",
 
 rule all:
     input:
-       expand("/home/azureuser/data/ycchen/{genome}_hash_table.cfg", genome="hg19"),
        expand("/home/azureuser/data/BAM/mapped/{sample}.sorted.bam", sample = samples)
        
-
-
 rule dragmap_build:
     input:
-        ref="/home/azureuser/data/REF/{genome}.fa",
+        ref="/home/azureuser/data/REF/hg19.fa",
     output:
         idx=multiext(
-            "{genome}/",
+            "hg19/",
             "hash_table.cfg",
             "hash_table.cfg.bin",
             "hash_table.cmp",
@@ -27,9 +24,9 @@ rule dragmap_build:
             "str_table.bin",
         ),
     log:
-        "logs/dragmap/{genome}.build.log",
+        "logs/dragmap/hg19.build.log",
     params:
-        extra="--output-directory /home/azureuser/data/ycchen/{genome}",
+        extra="",
     threads: 2
     wrapper:
         "v1.7.0-4-g6a6d28a/bio/dragmap/build"
@@ -38,7 +35,7 @@ rule dragmap_build:
 rule dragmap_align:
     input:
         reads=["/home/azureuser/data/FASTQ/{sample}_R1.fastq.gz", "/home/azureuser/data/FASTQ/{sample}_R2.fastq.gz"],
-        idx="/home/azureuser/data/ycchen/{genome}",
+        idx="/home/azureuser/data/ycchen/hg19",
     output:
         "/home/azureuser/data/BAM/mapped/{sample}.sorted.bam",
     log:
