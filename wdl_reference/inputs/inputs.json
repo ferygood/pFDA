@@ -1,0 +1,15 @@
+{
+  "MainWorkflow.sampleName": "PanelB_LAB1_LIB1",
+  "MainWorkflow.inFileFqs": [
+    "/home/azureuser/mnt/data/PanelB/FASTQ/PanelB_LAB1_LIB1_R1.fastq.gz",
+    "/home/azureuser/mnt/data/PanelB/FASTQ/PanelB_LAB1_LIB1_R2.fastq.gz"
+  ],
+  "MainWorkflow.refFa": "/home/azureuser/mnt/data/ref/hg19.fa",
+  "MainWorkflow.refFai": "/home/azureuser/mnt/data/ref/hg19.fa.fai",
+  "MainWorkflow.refDict": "/home/azureuser/mnt/data/ref/hg19.dict",
+  "MainWorkflow.refBwt": "/home/azureuser/mnt/data/ref/hg19.fa.bwt",
+  "MainWorkflow.refAnn": "/home/azureuser/mnt/data/ref/hg19.fa.ann",
+  "MainWorkflow.refAmb": "/home/azureuser/mnt/data/ref/hg19.fa.amb",
+  "MainWorkflow.refSa": "/home/azureuser/mnt/data/ref/hg19.fa.sa",
+  "MainWorkflow.refPac": "/home/azureuser/mnt/data/ref/hg19.fa.pac"
+}
